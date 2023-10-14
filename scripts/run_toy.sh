@@ -42,7 +42,7 @@ get_test_BLEU(){
     fseq=$workloc/processed_data
     modeldir=$workloc/models
     resdir=$workloc/result && mkdir -p $resdir
-    raw_reference=$workloc/raw/test.$tgt
+    raw_reference=$workloc/test_toy.$tgt
 
     if [[ $modelname == *"ptr"* ]]; then
         useptr='--use-ptrnet'    

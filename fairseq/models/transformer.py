@@ -28,7 +28,7 @@ from . import (
 class TransformerModel(FairseqModel):
     def __init__(self, encoder, decoder, args=None):
         super().__init__(encoder, decoder)
-             
+
     @staticmethod
     def add_args(parser):
         """Add model-specific arguments to the parser."""

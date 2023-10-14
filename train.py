@@ -257,6 +257,8 @@ def validate(args, trainer, task, epoch_itr, subsets):
         # log validation stats
         stats = get_valid_stats(trainer)
         for k in ['loss', 'nll_loss', 'bleu']:
+            if k == 'nll_loss' and k not in stats:
+                continue
             stats[k] = stats[k].avg
         for k, meter in extra_meters.items():
             stats[k] = meter.avg

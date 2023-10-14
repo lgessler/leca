@@ -50,33 +50,32 @@ get_test_BLEU(){
     fseq=wmt14_en_de_toy_processed
     modeldir=checkpoints
     resdir=$workloc/result && mkdir -p $resdir
-    raw_reference=wmt_en_de_toy/test.$tgt
+    raw_reference=wmt14_en_de_toy/test.$tgt
 
-    if [[ $modelname == *"ptr"* ]]; then
-        useptr='--use-ptrnet'    
-    else
-        useptr=''
-    fi
+    #if [[ $modelname == *"ptr"* ]]; then
+    #    useptr='--use-ptrnet'    
+    #else
+    #    useptr=''
+    #fi
 
-    if [[ $testclean == "1" ]]; then
-        echo "test on clean dataset..."
-        python generate.py $fseq -s $src -t $tgt \
-            --path $modeldir/checkpoint_best_bleu.pt \
-            --batch-size 20 --remove-bpe --sacrebleu \
-            --decoding-path $resdir --quiet --testclean --consnmt $useptr \
-            --model-overrides "{'beam':10}"
-    else 
-        echo "test on cons dataset..."
-        python generate.py $fseq -s $src -t $tgt \
-            --path $modeldir/checkpoint_best_bleu.pt \
-            --batch-size 20 --remove-bpe --sacrebleu \
-            --decoding-path $resdir --quiet --consnmt $useptr \
-            --model-overrides "{'beam':10}"
-    fi 
+    #if [[ $testclean == "1" ]]; then
+    #    echo "test on clean dataset..."
+    #    python generate.py $fseq -s $src -t $tgt \
+    #        --path $modeldir/checkpoint_best_bleu.pt \
+    #        --batch-size 20 --remove-bpe --sacrebleu \
+    #        --decoding-path $resdir --quiet --testclean --consnmt $useptr \
+    #        --model-overrides "{'beam':10}"
+    #else 
+    #    echo "test on cons dataset..."
+    #    python generate.py $fseq -s $src -t $tgt \
+    #        --path $modeldir/checkpoint_best_bleu.pt \
+    #        --batch-size 20 --remove-bpe --sacrebleu \
+    #        --decoding-path $resdir --quiet --consnmt $useptr \
+    #        --model-overrides "{'beam':10}"
+    #fi 
 
-    detok=$workloc/detokenize.perl
-    perl $detok -l $tgt < $resdir/decoding.txt > $resdir/decoding.detok
-    perl $detok -l $tgt < $raw_reference > $resdir/target.detok
+    python mbart_detokenize.py $raw_reference $resdir/target.detok
+    python mbart_detokenize.py $resdir/decoding.txt $resdir/decoding.detok
     cat $resdir/decoding.detok | sacrebleu $resdir/target.detok
 
     if [[ $testclean == "0" ]]; then
